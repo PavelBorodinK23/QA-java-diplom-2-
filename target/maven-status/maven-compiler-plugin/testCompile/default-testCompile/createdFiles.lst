@@ -1,0 +1,5 @@
+stellar_burgers\api\UserTest.class
+stellar_burgers\utils\RandomDataGenerator.class
+stellar_burgers\utils\TestData.class
+stellar_burgers\api\AuthTest.class
+stellar_burgers\api\OrderTest.class
