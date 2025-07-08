@@ -14,10 +14,8 @@ public class OrderClient {
                 .header("Authorization", accessToken)
                 .body(order)
                 .when()
-                .post(BASE_URL + "/orders")
-                .then()
-                .log().ifValidationFails()
-                .extract().response();
+                .post(BASE_URL + "/orders");
+        // Убрано then().extract().response() чтобы видеть реальные коды ошибок
     }
 
     public Response createOrderWithoutAuth(Order order) {
