@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: stellar_burgers.api.AuthTest
 -------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.06 s - in stellar_burgers.api.AuthTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.398 s - in stellar_burgers.api.AuthTest

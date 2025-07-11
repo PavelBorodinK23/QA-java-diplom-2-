@@ -2,6 +2,7 @@ package stellar_burgers.api;
 
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
+import org.junit.Before;
 import org.junit.Test;
 import stellar_burgers.models.User;
 import stellar_burgers.utils.RandomDataGenerator;
@@ -12,6 +13,17 @@ import static org.hamcrest.Matchers.equalTo;
 public class AuthTest {
     private final AuthClient authClient = new AuthClient();
     private final TestData testData = new TestData();
+    private User existingUser;
+
+    @Before
+    public void setUp() {
+        // Создаем тестового пользователя перед тестами на логин
+        existingUser = new User(
+                RandomDataGenerator.generateRandomEmail(),
+                testData.getCorrectPassword(),
+                testData.getCorrectName());
+        authClient.createUser(existingUser);
+    }
 
     @Test
     @DisplayName("Создание уникального пользователя")
@@ -30,24 +42,33 @@ public class AuthTest {
     @Test
     @DisplayName("Создание уже зарегистрированного пользователя")
     public void createExistingUser() {
-        User user = new User(
-                testData.getExistingEmail(),
-                testData.getCorrectPassword(),
-                testData.getCorrectName());
-
-        Response response = authClient.createUser(user);
+        Response response = authClient.createUser(existingUser);
         response.then()
                 .statusCode(403)
                 .body("message", equalTo("User already exists"));
     }
 
     @Test
-    @DisplayName("Создание пользователя без обязательного поля")
-    public void createUserWithoutRequiredField() {
+    @DisplayName("Создание пользователя без email")
+    public void createUserWithoutEmail() {
         User user = new User(
-                testData.getExistingEmail(),
+                null,
                 testData.getCorrectPassword(),
-                null);
+                testData.getCorrectName());
+
+        Response response = authClient.createUser(user);
+        response.then()
+                .statusCode(403)
+                .body("message", equalTo("Email, password and name are required fields"));
+    }
+
+    @Test
+    @DisplayName("Создание пользователя без пароля")
+    public void createUserWithoutPassword() {
+        User user = new User(
+                RandomDataGenerator.generateRandomEmail(),
+                null,
+                testData.getCorrectName());
 
         Response response = authClient.createUser(user);
         response.then()
@@ -58,12 +79,7 @@ public class AuthTest {
     @Test
     @DisplayName("Успешный вход пользователя")
     public void loginSuccess() {
-        User user = new User(
-                testData.getExistingEmail(),
-                testData.getCorrectPassword(),
-                testData.getCorrectName());
-
-        Response response = authClient.login(user);
+        Response response = authClient.login(existingUser);
         response.then()
                 .statusCode(200)
                 .body("success", equalTo(true));
